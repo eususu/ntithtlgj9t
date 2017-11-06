@@ -2,10 +2,11 @@
 #NoEnv
 #SingleInstance Force
 
-BaseDir := "D:\MySelf\summoners_war"
-kairos := BaseDir . "\window\카이로스던전.bmp"
-
 SetWorkingDir %A_ScriptDir%
+
+BaseDir := "D:\MySelf\summoners_war"
+BaseDir = %A_ScriptDir%
+kairos := BaseDir . "\window\카이로스던전.bmp"
 
 Gui Add, Button, x8 y8 w83 h22, &Start
 Gui Add, Edit, x8 y40 w481 h264 Multi +ReadOnly vLogs, 시작
@@ -33,8 +34,12 @@ FindScene(scene)
 	ImageSearch, X, Y, 0, 0, %A_ScreenWidth%, %A_ScreenHeight%, %scene%
 	if (ErrorLevel = 0) {		
 		AddLog("found!!")
+	} else if (ErrorLevel = 1) {
+		AddLog("not found the image in the screen")
+	} else if (ErrorLevel =2 ) {
+		AddLog("not found image file:" . %scene%)
 	} else {
-		AddLog("found	or no image:" . ErrorLevel)
+		AddLog("unknown errorto find image:" . ErrorLevel)
 	}
 	
 	return
