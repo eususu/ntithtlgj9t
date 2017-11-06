@@ -6,13 +6,30 @@ SetWorkingDir %A_ScriptDir%
 
 BaseDir := "D:\MySelf\summoners_war"
 BaseDir = %A_ScriptDir%
-kairos := BaseDir . "\window\카이로스던전.bmp"
+kairos := BaseDir . "\window\카이로스던전_home.bmp"
+battleDone := BaseDir . "\window\전투종료_확인.bmp"
+getRune := BaseDir . "\window\룬획득.bmp"
+runeType_normal := BaseDir . "\window\runtype_normal.bmp"
+rune_sell := BaseDir . "\window\run_sell.bmp"
+confirm_yes := BaseDir . "\button\confirm_yes.bmp"
+retry := BaseDir . "\button\retry.png"
+battleStart := BaseDir . "\button\battleStart.bmp"
+confirm := BaseDir . "\button\confirm.bmp"
+
+
 
 Gui Add, Button, x8 y8 w83 h22, &Start
-Gui Add, Edit, x8 y40 w481 h264 Multi +ReadOnly vLogs, 시작
+Gui Add, Edit, x8 y40 w511 h264 Multi +ReadOnly vLogs
 Gui Add, Button, x96 y8 w80 h23, &Stop
 
-Gui Show, w497 h312, 서머너즈워
+Gui Show, w527 h312, 서머너즈워
+
+AddLog("시작")
+AddLog("basepath is " . BaseDir)
+AddLog("path is " . kairos)
+
+WinGetClass, cls, "1"
+AddLog(cls)
 Return
 
 GuiEscape:
@@ -24,35 +41,56 @@ global Logs
 
 
 AddLog(strings)
-{	Logs .= strings . "`n"
+{	Logs := "- " . strings . "`n" . Logs
 	GuiControl,, Logs, %Logs%
 }
 
-FindScene(scene)
+FindScene(scene, click = false)
 {
-	AddLog("FindScene start:" . scene)
-	ImageSearch, X, Y, 0, 0, %A_ScreenWidth%, %A_ScreenHeight%, %scene%
+	;AddLog("FindScene start:" . scene)
+	ImageSearch, X, Y, 0, 0, %A_ScreenWidth%, %A_ScreenHeight%, *20 %scene%
 	if (ErrorLevel = 0) {		
 		AddLog("found!!")
+		
+		if (click) {
+			MouseClick, Left, X + 20, Y + 20	
+		}
+		
+		return true
 	} else if (ErrorLevel = 1) {
-		AddLog("not found the image in the screen")
+		AddLog("not found the image(" . scene . ") in the screen")
 	} else if (ErrorLevel =2 ) {
 		AddLog("not found image file:" . %scene%)
 	} else {
 		AddLog("unknown errorto find image:" . ErrorLevel)
 	}
 	
-	return
+	return false
 }
 
 
 
 
 ButtonStart:
-AddLog("basepath is " . BaseDir)
-AddLog("path is " . kairos)
 
-FindScene(kairos)
+
+;FindScene(kairos)
+;FindScene(getRune)
+;FindScene(battleDone)
+
+if (FindScene(runeType_normal) == true) {
+	if (FindScene(rune_sell, true)) {
+		Sleep, 320
+		FindScene(confirm_yes, true)
+	}
+}
+
+FindScene(retry, true)
+
+FindScene(battleStart, true)
+
+FindScene(confirm, true)
+
 return
 
 
